@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\HoraireRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: HoraireRepository::class)]
 class Horaire
@@ -11,23 +12,30 @@ class Horaire
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('getTimeSheet')]
     private ?int $id = null;
 
+    #[Groups('getTimeSheet')]
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $date = null;
 
+    #[Groups('getTimeSheet')]
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $inAt = null;
 
+    #[Groups('getTimeSheet')]
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $outAt = null;
 
+    #[Groups('getTimeSheet')]
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $breakAt = null;
 
+    #[Groups('getTimeSheet')]
     #[ORM\Column(nullable: true)]
     private ?int $totalTime = null;
 
+    #[Groups('getTimeSheet')]
     #[ORM\Column(nullable: true)]
     private ?int $totalBreak = null;
 

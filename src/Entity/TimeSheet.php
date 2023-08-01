@@ -6,6 +6,7 @@ use App\Repository\TimeSheetRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TimeSheetRepository::class)]
 class TimeSheet
@@ -13,35 +14,46 @@ class TimeSheet
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('getTimeSheet')]
     private ?int $id = null;
 
+    #[Groups('getTimeSheet')]
     #[ORM\Column(length: 100)]
     private ?string $name = null;
 
+    #[Groups('getTimeSheet')]
     #[ORM\Column(nullable: true)]
     private ?int $year = null;
 
+    #[Groups('getTimeSheet')]
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $startAt = null;
 
+    #[Groups('getTimeSheet')]
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $endAt = null;
 
+    #[Groups('getTimeSheet')]
     #[ORM\Column(nullable: true)]
     private ?int $dailyHours = null;
 
+    #[Groups('getTimeSheet')]
     #[ORM\Column(nullable: true)]
     private ?bool $weekend = null;
 
+    #[Groups('getTimeSheet')]
     #[ORM\ManyToOne(inversedBy: 'timeSheets')]
     private ?User $user = null;
 
+    #[Groups('getTimeSheet')]
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[Groups('getTimeSheet')]
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $UptatedAt = null;
 
+    #[Groups('getTimeSheet')]
     #[ORM\OneToMany(mappedBy: 'timeSheet', targetEntity: Horaire::class)]
     private Collection $horaires;
 
