@@ -51,11 +51,15 @@ class TimeSheet
 
     #[Groups('getTimeSheet')]
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $UptatedAt = null;
+    private ?\DateTimeImmutable $uptatedAt = null;
 
     #[Groups('getTimeSheet')]
     #[ORM\OneToMany(mappedBy: 'timeSheet', targetEntity: Horaire::class)]
     private Collection $horaires;
+
+    #[Groups('getTimeSheet')]
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $deletedAt = null;
 
     public function __construct()
     {
@@ -165,12 +169,12 @@ class TimeSheet
 
     public function getUptatedAt(): ?\DateTimeImmutable
     {
-        return $this->UptatedAt;
+        return $this->uptatedAt;
     }
 
     public function setUptatedAt(?\DateTimeImmutable $UptatedAt): static
     {
-        $this->UptatedAt = $UptatedAt;
+        $this->uptatedAt = $UptatedAt;
 
         return $this;
     }
@@ -201,6 +205,18 @@ class TimeSheet
                 $horaire->setTimeSheet(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDeletedAt(): ?\DateTimeImmutable
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeImmutable $deletedAt): static
+    {
+        $this->deletedAt = $deletedAt;
 
         return $this;
     }
