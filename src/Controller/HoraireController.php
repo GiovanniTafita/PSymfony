@@ -30,9 +30,10 @@ class HoraireController extends AbstractController
             [AbstractNormalizer::OBJECT_TO_POPULATE => $currentHoraire]
         );
 
+        $this->horaireService->totalTime($updatedHoraire);
         $this->horaireService->saveHoraire($updatedHoraire);
 
-        $jsonHoraire = $this->serializer->serialize($updatedHoraire, 'json');
+        $jsonHoraire = $this->serializer->serialize($updatedHoraire, 'json', ['groups' => 'getHoraire']);
 
         return new JsonResponse($jsonHoraire, Response::HTTP_CREATED, [], true);
     }
@@ -52,6 +53,26 @@ class HoraireController extends AbstractController
     {
         $this->horaireService->end($horaire);
         $this->horaireService->totalTime($horaire);
+
+        $jsonHoraire = $this->serializer->serialize($horaire, 'json', ['groups' => 'getHoraire']);
+
+        return new JsonResponse($jsonHoraire, Response::HTTP_OK, [], true);
+    }
+
+    #[Route('api/horaire/break/{id}', name: 'break_horaire', methods: ['POST'])]
+    public function breakHoraire(Horaire $horaire)
+    {
+        $this->horaireService->break($horaire);
+
+        $jsonHoraire = $this->serializer->serialize($horaire, 'json', ['groups' => 'getHoraire']);
+
+        return new JsonResponse($jsonHoraire, Response::HTTP_OK, [], true);
+    }
+
+    #[Route('api/horaire/resume/{id}', name: 'resume_horaire', methods: ['POST'])]
+    public function resumeHoraire(Horaire $horaire)
+    {
+        $this->horaireService->resume($horaire);
 
         $jsonHoraire = $this->serializer->serialize($horaire, 'json', ['groups' => 'getHoraire']);
 
