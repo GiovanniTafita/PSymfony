@@ -26,7 +26,7 @@ class TimeSheetController extends AbstractController
     public function getTimeSheets(): JsonResponse
     {
         $timeSheets = $this->timeSheetService->getTimeSheets();
-        $jsonTimeSheets = $this->serializer->serialize($timeSheets, 'json');
+        $jsonTimeSheets = $this->serializer->serialize($timeSheets, 'json', ['groups' => 'getTimeSheet']);
 
         return new JsonResponse($jsonTimeSheets, Response::HTTP_OK, [], true);
     }

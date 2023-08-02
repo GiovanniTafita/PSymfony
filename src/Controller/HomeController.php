@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
@@ -15,5 +17,12 @@ class HomeController extends AbstractController
             'message' => 'Welcome to your new secret controller!',
             'path' => 'src/Controller/HomeController.php',
         ]);
+    }
+
+    #[Route('api/timeZone', name: 'app_time_zone', methods: ['GET'])]
+    public function timeZone()
+    {
+        $now = new DateTimeImmutable();
+        return new JsonResponse(["time-zone" => $now->getTimezone()->getName()], Response::HTTP_OK);
     }
 }

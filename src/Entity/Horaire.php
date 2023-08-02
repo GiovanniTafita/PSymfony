@@ -12,30 +12,30 @@ class Horaire
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('getTimeSheet')]
+    #[Groups(['getTimeSheet', 'getHoraire'])]
     private ?int $id = null;
 
-    #[Groups('getTimeSheet')]
+    #[Groups(['getTimeSheet', 'getHoraire'])]
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $date = null;
 
-    #[Groups('getTimeSheet')]
+    #[Groups(['getTimeSheet', 'getHoraire'])]
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $inAt = null;
 
-    #[Groups('getTimeSheet')]
+    #[Groups(['getTimeSheet', 'getHoraire'])]
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $outAt = null;
 
-    #[Groups('getTimeSheet')]
+    #[Groups(['getTimeSheet', 'getHoraire'])]
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $breakAt = null;
 
-    #[Groups('getTimeSheet')]
+    #[Groups(['getTimeSheet', 'getHoraire'])]
     #[ORM\Column(nullable: true)]
     private ?int $totalTime = null;
 
-    #[Groups('getTimeSheet')]
+    #[Groups(['getTimeSheet', 'getHoraire'])]
     #[ORM\Column(nullable: true)]
     private ?int $totalBreak = null;
 
