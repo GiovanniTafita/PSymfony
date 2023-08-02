@@ -3,9 +3,12 @@
 ```
 composer install
 ```
-#Generate key
 
+#Generate key
 ```
 php bin/console lexik:jwt:generate-keypair
 ```
 #Database migration
+```
+php bin/console doctrine:migrations:migrate
+```
