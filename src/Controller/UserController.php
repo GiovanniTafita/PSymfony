@@ -3,30 +3,33 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\UserService;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class UserController extends AbstractController
 {
-	private $serializer;
-	private $passwordHasher;
-	private $entityManager;
-
 	public function __construct(
-		SerializerInterface $serializer,
-		UserPasswordHasherInterface $passwordHasher,
-		EntityManagerInterface $entityManager
+		private SerializerInterface $serializer,
+		private UserService $userService
 	) {
-		$this->serializer = $serializer;
-		$this->passwordHasher = $passwordHasher;
-		$this->entityManager = $entityManager;
 	}
 
+	#[IsGranted('ROLE_ADMIN')]
+	#[Route('/api/users', name: 'api_users', methods: 'GET')]
+	public function getUsers(): JsonResponse
+	{
+		$users = $this->userService->getUsers();
+		$usersJson = $this->serializer->serialize($users, 'json');
+		return new JsonResponse($usersJson, 201, [], true);
+	}
+
+	#[IsGranted('ROLE_MANAGER')]
 	#[Route('/api/register', name: 'api_register', methods: 'POST')]
 	public function register(Request $request): JsonResponse
 	{
@@ -37,21 +40,26 @@ class UserController extends AbstractController
 			return new JsonResponse(["message" => "no permission"], 401);
 		}
 
-		$user = $this->createUser($user);
+		$user = $this->userService->saveUser($user);
 
 		$userJson = $this->serializer->serialize($user, 'json');
 		return new JsonResponse($userJson, 201, [], true);
 	}
 
-	public function createUser(User $user)
+	#[IsGranted('ROLE_ADMIN')]
+	#[Route('/api/update_roles/{id}', name: 'api_roles', methods: 'PUT')]
+	public function updateRoles(User $currentUser, Request $request): JsonResponse
 	{
-		// HashPassword
-		$hashedPass = $this->passwordHasher->hashPassword($user, $user->getPassword());
-		$user->setPassword($hashedPass);
+		$updatedUser = $this->serializer->deserialize(
+			$request->getContent(),
+			User::class,
+			'json',
+			[AbstractNormalizer::OBJECT_TO_POPULATE => $currentUser]
+		);
 
-		$this->entityManager->persist($user);
-		$this->entityManager->flush();
+		$this->userService->saveUser($updatedUser);
 
-		return $user;
+		$userJson = $this->serializer->serialize($updatedUser, 'json');
+		return new JsonResponse($userJson, 200, [], true);
 	}
 }

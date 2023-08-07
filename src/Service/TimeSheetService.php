@@ -55,6 +55,11 @@ class TimeSheetService
       for ($currentDate = $startDate; $currentDate <= $endDate; $currentDate = $currentDate->modify('+1 day')) {
         $newHoraire = new Horaire();
         $newHoraire->setDate($currentDate->format('Y-m-d'));
+
+        if ($this->isWeekEnd($currentDate)) {
+          $newHoraire->setTodo(8);
+        }
+
         $this->entityManager->persist($newHoraire);
 
         $timeSheet->addHoraire($newHoraire);
@@ -66,5 +71,14 @@ class TimeSheetService
       $this->entityManager->flush();
       return $timeSheet;
     }
+  }
+
+  public function isWeekEnd($date)
+  {
+    $dayOfWeek = $date->format('N');
+    if ($dayOfWeek == 6 || $dayOfWeek == 7) {
+      return true;
+    }
+    return false;
   }
 }

@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use App\Entity\Horaire;
-use App\Entity\TimeSheet;
 use App\Repository\HoraireRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -57,7 +56,8 @@ class HoraireService
   {
     if ($horaire->getBreakAt() && !$horaire->getOutAt()) {
       $now = new \DateTimeImmutable();
-      $totalBreak = $this->getSecondesDiff($horaire->getBreakAt(), $now);
+      $horaire->setResumeAt($now);
+      $totalBreak = $this->getSecondsDiff($horaire->getBreakAt(), $now);
       $horaire->setTotalBreak($totalBreak);
 
       $this->saveHoraire($horaire);
@@ -70,7 +70,7 @@ class HoraireService
   {
     if ($horaire->getInAt() && $horaire->getOutAt()) {
       // En secondes
-      $total = $this->getSecondesDiff($horaire->getInAt(), $horaire->getOutAt());
+      $total = $this->getSecondsDiff($horaire->getInAt(), $horaire->getOutAt());
       if ($horaire->getTotalBreak()) {
         $total = $total - $horaire->getTotalBreak();
       }
@@ -89,10 +89,10 @@ class HoraireService
     return $interval->days * 24 * 60 + $interval->h * 60 + $interval->i;
   }
 
-  public function getSecondesDiff(\DateTimeImmutable $start, \DateTimeImmutable $end)
+  public function getSecondsDiff(\DateTimeImmutable $start, \DateTimeImmutable $end)
   {
     $interval = $start->diff($end);
     // En Secondes
-    return $interval->s + ($interval->i * 60) + ($interval->h * 3600) + ($interval->days * 86400);
+    return $interval->days * 24 * 60 * 60 + $interval->h * 60 * 60 + $interval->i * 60 + $interval->s;
   }
 }

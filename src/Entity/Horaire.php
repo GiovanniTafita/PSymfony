@@ -33,14 +33,24 @@ class Horaire
 
     #[Groups(['getTimeSheet', 'getHoraire'])]
     #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $resumeAt = null;
+
+    #[Groups(['getTimeSheet', 'getHoraire'])]
+    #[ORM\Column(nullable: true)]
     private ?int $totalTime = null;
 
     #[Groups(['getTimeSheet', 'getHoraire'])]
     #[ORM\Column(nullable: true)]
     private ?int $totalBreak = null;
 
+    #[Groups(['getTimeSheet', 'getHoraire'])]
+    #[ORM\Column(nullable: true)]
+    private ?int $todo = null;
+
     #[ORM\ManyToOne(inversedBy: 'horaires')]
     private ?TimeSheet $timeSheet = null;
+
+
 
     public function getId(): ?int
     {
@@ -127,6 +137,30 @@ class Horaire
     public function setTimeSheet(?TimeSheet $timeSheet): static
     {
         $this->timeSheet = $timeSheet;
+
+        return $this;
+    }
+
+    public function getResumeAt(): ?\DateTimeImmutable
+    {
+        return $this->resumeAt;
+    }
+
+    public function setResumeAt(?\DateTimeImmutable $resumeAt): static
+    {
+        $this->resumeAt = $resumeAt;
+
+        return $this;
+    }
+
+    public function getTodo(): ?int
+    {
+        return $this->todo;
+    }
+
+    public function setTodo(?int $todo): static
+    {
+        $this->todo = $todo;
 
         return $this;
     }
