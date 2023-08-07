@@ -42,7 +42,7 @@ class TimeSheet
     private ?bool $weekend = null;
 
     #[Groups('getTimeSheet')]
-    #[ORM\ManyToOne(inversedBy: 'timeSheets')]
+    #[ORM\ManyToOne(inversedBy: 'timeSheets', cascade: ["persist"])]
     private ?User $user = null;
 
     #[Groups('getTimeSheet')]

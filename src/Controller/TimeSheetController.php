@@ -13,12 +13,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use App\Service\TimeSheetService;
+use App\Service\UserService;
 
 class TimeSheetController extends AbstractController
 {
     public function __construct(
         private SerializerInterface $serializer,
-        private TimeSheetService $timeSheetService
+        private TimeSheetService $timeSheetService,
+        private UserService $userService
     ) {
     }
 
@@ -61,9 +63,22 @@ class TimeSheetController extends AbstractController
 
         $this->timeSheetService->saveTimeSheet($updatedTimeSheet);
 
-        $jsonTimeSheet = $this->serializer->serialize($updatedTimeSheet, 'json');
+        $jsonTimeSheet = $this->serializer->serialize($updatedTimeSheet, 'json', ['groups' => 'getTimeSheet']);
 
-        return new JsonResponse($jsonTimeSheet, Response::HTTP_CREATED, [], true);
+        return new JsonResponse($jsonTimeSheet, Response::HTTP_OK, [], true);
+    }
+
+    #[Route('/api/time_sheet/assign/{id}', name: 'assign_time_sheet', methods: 'POST')]
+    public function assignTimeSheet(Request $request, TimeSheet $timeSheet): JsonResponse
+    {
+        $user = $this->userService->getUserBy(json_decode($request->getContent(), true));
+        $timeSheet->setUser($user);
+
+        $this->timeSheetService->saveTimeSheet($timeSheet);
+
+        $jsonTimeSheet = $this->serializer->serialize($timeSheet, 'json', ['groups' => 'getTimeSheet']);
+
+        return new JsonResponse($jsonTimeSheet, Response::HTTP_OK, [], true);
     }
 
     #[Route('/api/time_sheet/match/{id}', name: 'match_time_sheet', methods: 'POST')]

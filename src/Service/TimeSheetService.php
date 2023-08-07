@@ -10,9 +10,11 @@ use Doctrine\ORM\EntityManagerInterface;
 class TimeSheetService
 {
   public function __construct(
-    private TimeSheetRepository $timeSheetRepository,
-    private EntityManagerInterface $entityManager
-  ) {
+    private TimeSheetRepository    $timeSheetRepository,
+    private EntityManagerInterface $entityManager,
+    private DateTimeService        $dateTimeService
+  )
+  {
   }
 
   public function getTimeSheets()
@@ -48,6 +50,7 @@ class TimeSheetService
   {
     $startDate = $timeSheet->getStartAt();
     $endDate = $timeSheet->getEndAt();
+    $todo = $timeSheet->getDailyHours() ?: 8;
     if (!$startDate || !$endDate || $timeSheet->getHoraires()->count() > 0) {
       return $timeSheet;
     } else {
@@ -56,8 +59,9 @@ class TimeSheetService
         $newHoraire = new Horaire();
         $newHoraire->setDate($currentDate->format('Y-m-d'));
 
-        if ($this->isWeekEnd($currentDate)) {
-          $newHoraire->setTodo(8);
+        if (!$this->dateTimeService->isWeekEnd($currentDate)) {
+          $todoSeconds = $this->dateTimeService->convertToSeconds($todo);
+          $newHoraire->setTodo($todoSeconds);
         }
 
         $this->entityManager->persist($newHoraire);
@@ -66,19 +70,10 @@ class TimeSheetService
 
         array_push($horaires, $newHoraire);
       }
-
       $this->entityManager->persist($timeSheet);
       $this->entityManager->flush();
+
       return $timeSheet;
     }
-  }
-
-  public function isWeekEnd($date)
-  {
-    $dayOfWeek = $date->format('N');
-    if ($dayOfWeek == 6 || $dayOfWeek == 7) {
-      return true;
-    }
-    return false;
   }
 }

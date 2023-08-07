@@ -29,6 +29,14 @@ class UserController extends AbstractController
 		return new JsonResponse($usersJson, 201, [], true);
 	}
 
+	#[IsGranted('ROLE_ADMIN')]
+	#[Route('/api/user/{id}', name: 'get_user', methods: 'GET')]
+	public function getUserBy(User $user): JsonResponse
+	{
+		$usersJson = $this->serializer->serialize($user, 'json');
+		return new JsonResponse($usersJson, 200, [], true);
+	}
+
 	#[IsGranted('ROLE_MANAGER')]
 	#[Route('/api/register', name: 'api_register', methods: 'POST')]
 	public function register(Request $request): JsonResponse

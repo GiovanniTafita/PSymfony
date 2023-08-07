@@ -21,6 +21,11 @@ class UserService
     return $this->userRepository->findAll();
   }
 
+  public function getUserBy($condition)
+  {
+    return $this->userRepository->findOneBy($condition);
+  }
+
   public function saveUser(User $user)
   {
     $user = $this->hashPassword($user);

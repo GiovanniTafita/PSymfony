@@ -10,7 +10,8 @@ class HoraireService
 {
   public function __construct(
     private HoraireRepository $horaireRepository,
-    private EntityManagerInterface $entityManager
+    private EntityManagerInterface $entityManager,
+    private DateTimeService $dateTimeService
   ) {
   }
 
@@ -57,7 +58,7 @@ class HoraireService
     if ($horaire->getBreakAt() && !$horaire->getOutAt()) {
       $now = new \DateTimeImmutable();
       $horaire->setResumeAt($now);
-      $totalBreak = $this->getSecondsDiff($horaire->getBreakAt(), $now);
+      $totalBreak = $this->dateTimeService->getSecondsDiff($horaire->getBreakAt(), $now);
       $horaire->setTotalBreak($totalBreak);
 
       $this->saveHoraire($horaire);
@@ -70,7 +71,7 @@ class HoraireService
   {
     if ($horaire->getInAt() && $horaire->getOutAt()) {
       // En secondes
-      $total = $this->getSecondsDiff($horaire->getInAt(), $horaire->getOutAt());
+      $total = $this->dateTimeService->getSecondsDiff($horaire->getInAt(), $horaire->getOutAt());
       if ($horaire->getTotalBreak()) {
         $total = $total - $horaire->getTotalBreak();
       }
@@ -80,19 +81,5 @@ class HoraireService
     }
 
     return $horaire;
-  }
-
-  public function getMinutesDiff(\DateTimeImmutable $start, \DateTimeImmutable $end)
-  {
-    $interval = $start->diff($end);
-    // En Minutes
-    return $interval->days * 24 * 60 + $interval->h * 60 + $interval->i;
-  }
-
-  public function getSecondsDiff(\DateTimeImmutable $start, \DateTimeImmutable $end)
-  {
-    $interval = $start->diff($end);
-    // En Secondes
-    return $interval->days * 24 * 60 * 60 + $interval->h * 60 * 60 + $interval->i * 60 + $interval->s;
   }
 }
