@@ -1,14 +1,18 @@
-# Time'IN
-#Composer
+## ErgoRH
+### Composer
 ```
 composer install
 ```
 
-#Generate key
+### Generate key
 ```
 php bin/console lexik:jwt:generate-keypair
 ```
-#Database migration
+### Create database
+```
+php bin/console doctrine:database:create
+```
+### Database migration
 ```
 php bin/console doctrine:migrations:migrate
 ```
